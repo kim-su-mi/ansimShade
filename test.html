@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form id="signupForm" onsubmit="return false;">
+        <input type="text" id="email" placeholder="이메일">
+        <input type="password" id="password" placeholder="비밀번호">
+        <input type="text" id="age" placeholder="나이">
+        <button type="submit">가입</button>
+    </form>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-storage.js"></script>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs, 
+            addDoc 
+        } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js"; // 이메일 회원가입
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyBy-RJGNxixlLJC19kFaODWvB5yxh-d6BQ",
+          authDomain: "ahnsimshade-dfeef.firebaseapp.com",
+          projectId: "ahnsimshade-dfeef",
+          storageBucket: "ahnsimshade-dfeef.firebasestorage.app",
+          messagingSenderId: "769551436852",
+          appId: "1:769551436852:web:bc1d36c4aac0e072778e61",
+          measurementId: "G-P2H1HSJXZ3"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        // firestore 연결
+        const db = getFirestore(app);
+        // 폼 제출 이벤트 처리
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('email').value;
+            const pw = document.getElementById('password').value;
+            const age =Number(document.getElementById('age').value);
+
+            try {
+                const docRef = await addDoc(collection(db, 'ansim_collection'), {
+                    id: id,
+                    pw: pw,
+                    age: age
+                });
+                console.log("문서가 추가되었습니다. ID: ", docRef.id);
+                alert('가입이 완료되었습니다!');
+            } catch (error) {
+                console.error("에러 발생: ", error);
+                alert('가입 중 오류가 발생했습니다.');
+            }
+        });
+
+        const auth = getAuth();
+        createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed up 
+            const user = userCredential.user;
+            // ...
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+        });
+
+        // 로그인 상�� 확인
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+                window.location.href = 'index.html';
+            }
+        });
+      </script>
+</body>
+</html>
