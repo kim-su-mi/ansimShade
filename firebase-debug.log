@@ -1,0 +1,16 @@
+[debug] [2025-01-07T12:50:38.092Z] ----------------------------------------------------------------------
+[debug] [2025-01-07T12:50:38.093Z] Command:       /usr/local/bin/firebase /Users/sumi/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase login
+[debug] [2025-01-07T12:50:38.094Z] CLI Version:   13.29.0
+[debug] [2025-01-07T12:50:38.094Z] Platform:      darwin
+[debug] [2025-01-07T12:50:38.095Z] Node Version:  v18.5.0
+[debug] [2025-01-07T12:50:38.096Z] Time:          Tue Jan 07 2025 21:50:38 GMT+0900 (Korean Standard Time)
+[debug] [2025-01-07T12:50:38.096Z] ----------------------------------------------------------------------
+[debug] 
+[info] i  Firebase optionally collects CLI and Emulator Suite usage and error reporting information to help improve our products. Data is collected in accordance with Google's privacy policy (https://policies.google.com/privacy) and is not used to identify you.
+ 
+[info] i  To change your data collection preference at any time, run `firebase logout` and log in again. 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=383207526&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+[info] 
+[info] Waiting for authentication...
