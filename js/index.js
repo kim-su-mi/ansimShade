@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import { 
     getFirestore, 
     collection, 
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.querySelector('.closebtn');
     
     // 초기에는 회원가입 섹션을 숨김
-    signupSection.style.display = 'none';
+    // signupSection.style.display = 'none';
     
     // 회원가입 버튼 클릭 시 회원가입 섹션 표시
     signupBtn.addEventListener('click', function(e) {
@@ -79,10 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Firebase Authentication으로 사용자 생성
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             
-            // 생성된 사용자 �보
+            // 생성된 사용자 정보
             const user = userCredential.user;
             
-            // 2. 즉시 로그�웃하여 자동 로그인 방지
+            // 2. 즉시 로그웃하여 자동 로그인 방지
             await signOut(auth);
 
             // 3. Firestore에 추가 사용자 정보 저장
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("사용자 정보가 성공적으로 저장되었습니다. Document ID:", userDoc.id);
                 
                 // 4. 회원가입 성공 처리
-                alert('회원가입이 �료되었습니다. 로그인해주세요.');
+                alert('회원가입이 종료되었습니다. 로그인해주세요.');
                 
                 // 5. 회원가입 모달 닫기
                 document.querySelector('.signup-section').style.display = 'none';
@@ -112,8 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 signupForm.reset();
 
             } catch (firestoreError) {
-                console.error("Firestore 저장 실��:", firestoreError);
-                alert('추가 정보 저�에 실패했습니다. 관리자에게 문의해주세요.');
+                console.error("Firestore 저장 실패:", firestoreError);
+                alert('추가 정보 저장에 실패했습니다. 관리자에게 문의해주세요.');
             }
 
         } catch (error) {
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     errorMsg = "이미 사용 중인 이메일 주소입니다.";
                     break;
                 case 'auth/invalid-email':
-                    errorMsg = "유효하지 않은 이��일 주소입니다.";
+                    errorMsg = "유효하지 않은 이메일 주소입니다.";
                     break;
                 case 'auth/operation-not-allowed':
                     errorMsg = "이메일/비밀번호 로그인이 비활성화되어 있습니다.";
@@ -149,15 +149,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('Email-4').value;
         const password = document.getElementById('Password-4').value;
         
-        // 로그인 시도
         try {
+            // 브라우저 세션 지속성 설정
+            await setPersistence(auth, browserSessionPersistence);
+            
+            // 로그인 시도
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             
             // 로그인 성공
             console.log('로그인 성공:', user.email);
             
-            // test.html로 리다이렉트
+            // main.html로 리다이렉트
             window.location.href = 'main.html';
             
         } catch (error) {
@@ -192,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 현재 URL이 index.html이고 회원가입 모달이 닫혀있을 때만 리다이렉트
             const isSignupModalClosed = document.querySelector('.signup-section').style.display === 'none';
             if (window.location.pathname.includes('index.html') && isSignupModalClosed) {
-                console.log('현재 로그�된 사용자:', user.email);
+                console.log('현재 로그인된 사용자:', user.email);
                 window.location.href = 'main.html';
             }
         }
