@@ -1,30 +1,12 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { auth, db } from './firebase-config.js';
 import { 
-    getFirestore, 
-    collection, 
-    addDoc 
-} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBy-RJGNxixlLJC19kFaODWvB5yxh-d6BQ",
-  authDomain: "ahnsimshade-dfeef.firebaseapp.com",
-  projectId: "ahnsimshade-dfeef",
-  storageBucket: "ahnsimshade-dfeef.firebasestorage.app",
-  messagingSenderId: "769551436852",
-  appId: "1:769551436852:web:bc1d36c4aac0e072778e61",
-  measurementId: "G-P2H1HSJXZ3"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, 
+    signOut, 
+    setPersistence, 
+    browserSessionPersistence 
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 // DOM이 로드된 후 실행
 document.addEventListener('DOMContentLoaded', function() {
