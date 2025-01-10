@@ -56,6 +56,7 @@
                     postElement.innerHTML = `
                         <div class="post-title">${postData.title}</div>
                         <div class="post-content">${postData.content}</div>
+                        ${postData.fileUrl ? `<img src="${postData.fileUrl}" alt="첨부 이미지" style="max-width: 100%; margin-top: 10px;">` : ''}
                     `;
                     postsContainer.appendChild(postElement);
                 });
