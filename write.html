@@ -1,0 +1,22 @@
+<!DOCTYPE html> 
+<html lang="en"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글쓰기</title>
+</head>
+<body>
+    <h1>글쓰기</h1>
+    <form id="writeForm">
+        <input type="text" id="title" placeholder="제목">
+        <textarea id="content" placeholder="내용"></textarea>
+        <input type="file" id="image" accept="image/*">
+        <button type="submit">작성</button>
+    </form>
+
+    <script type="module">
+        import { auth, db } from './js/firebase-config.js';
+
+    </script>
+</body>
+</html>
