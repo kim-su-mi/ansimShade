@@ -1830,6 +1830,7 @@
   margin-bottom: 1.333em;
   padding: 8px 12px;
   transition: box-shadow .2s, color .2s, box-shadow .2s, border-color .2s;
+  display: flex;
   position: relative;
 }
 

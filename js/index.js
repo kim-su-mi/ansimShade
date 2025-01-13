@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('로그인 성공:', user.email);
             
             // main.html로 리다이렉트
-            window.location.href = 'main.html';
+            window.location.href = 'dashboard.html';
             
         } catch (error) {
             console.error('로그인 에러:', error);
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const isSignupModalClosed = document.querySelector('.signup-section').style.display === 'none';
             if (window.location.pathname.includes('index.html') && isSignupModalClosed) {
                 console.log('현재 로그인된 사용자:', user.email);
-                window.location.href = 'main.html';
+                window.location.href = 'dashboard.html';
             }
         }
     });
