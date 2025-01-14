@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        .case-info {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .case-info h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .info-item {
+            margin: 10px 0;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            display: inline-block;
+            width: 120px;
+        }
         .post-container {
             margin: 20px;
             padding: 15px;
@@ -22,7 +41,12 @@
     </style>
 </head>
 <body>
-    <h1>로그인을 축하합니다</h1>
+    <div class="case-info">
+        <h2>케이스 정보</h2>
+        <div id="caseDetails"></div>
+    </div>
+    
+    <h1>게시글 목록</h1>
     <div id="posts-list"></div>
     <button class="write-btn" id="writeBtn"><a href="write.html">글쓰기</a></button>
     <button class="logout-btn" id="logoutBtn">로그아웃</button>
@@ -31,6 +55,29 @@
         import { auth, db } from './js/firebase-config.js';
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
         import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+        // URL 파라미터에서 케이스 정보 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const caseDetails = document.getElementById('caseDetails');
+        
+        // 케이스 정보 표시
+        if (urlParams.has('caseId')) {
+            const caseInfo = {
+                caseId: urlParams.get('caseId'),
+                clinicName: urlParams.get('clinicName'),
+                patientName: urlParams.get('patientName'),
+                createdAt: urlParams.get('createdAt'),
+                memo: urlParams.get('memo')
+            };
+
+            caseDetails.innerHTML = `
+                <div class="info-item"><span class="info-label">케이스 ID:</span> ${caseInfo.caseId}</div>
+                <div class="info-item"><span class="info-label">치과명:</span> ${caseInfo.clinicName}</div>
+                <div class="info-item"><span class="info-label">환자명:</span> ${caseInfo.patientName}</div>
+                <div class="info-item"><span class="info-label">생성일:</span> ${new Date(caseInfo.createdAt).toLocaleDateString()}</div>
+                <div class="info-item"><span class="info-label">메모:</span> ${caseInfo.memo || '없음'}</div>
+            `;
+        }
 
         // 사용자의 게시글 가져오기
         async function getUserPosts(uid) {
