@@ -1,5 +1,5 @@
 import { auth, db } from './firebase-config.js';
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', async function() {
     // 현재 로그인한 사용자 확인
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 querySnapshot.forEach((doc) => {
                     const caseData = doc.data();
                     const caseHtml = `
-                        <div class="case-table-row case">
+                        <div class="case-table-row case" data-case-id="${doc.id}">
                         <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36cb-ca543eaa" class="div-block-4">
                         <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36cc-ca543eaa" class="paragraph-small color-neutral-100 mg-bottom-2px">${caseData.caseId}</div>
                         </div>
@@ -67,6 +67,29 @@ document.addEventListener('DOMContentLoaded', async function() {
                     </div>
                     `;
                     caseContainer.insertAdjacentHTML('beforeend', caseHtml);
+                });
+
+                // 삭제 버튼에 이벤트 리스너 추가
+                document.querySelectorAll('.delete').forEach(deleteBtn => {
+                    deleteBtn.addEventListener('click', async function(e) {
+                        if (confirm('정말로 이 케이스를 삭제하시겠습니까?')) {
+                            const caseRow = e.target.closest('.case-table-row');
+                            const caseId = caseRow.dataset.caseId;
+                            
+                            try {
+                                // Firestore에서 문서 삭제
+                                await deleteDoc(doc(db, 'cases', caseId));
+                                
+                                // UI 업데이트를 위해 케이스 목록 다시 로드
+                                await loadCases();
+                                
+                                alert('케이스가 성공적으로 삭제되었습니다.');
+                            } catch (error) {
+                                console.error("케이스 삭제 실패:", error);
+                                alert('케이스 삭제에 실패했습니다.');
+                            }
+                        }
+                    });
                 });
             } catch (error) {
                 console.error("케이스 목록 로딩 실패:", error);
