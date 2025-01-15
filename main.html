@@ -53,8 +53,9 @@
 
     <script type="module">
         import { auth, db } from './js/firebase-config.js';
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
         import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+        import { handleLogout } from './js/auth-utils.js';
 
         // URL 파라미터에서 케이스 정보 가져오기
         const urlParams = new URLSearchParams(window.location.search);
@@ -133,16 +134,8 @@
             }
         });
 
-        // 로그아웃 기능
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('로그아웃 중 에러 발생:', error);
-                alert('로그아웃 중 오류가 발생했습니다.');
-            }
-        });
+        // 로그아웃 버튼에 이벤트 리스너 추가
+        document.getElementById('logoutBtn').addEventListener('click', handleLogout);
     </script>
 </body>
 </html>

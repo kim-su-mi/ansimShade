@@ -1,7 +1,12 @@
 import { auth, db } from './firebase-config.js';
 import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc, doc, orderBy } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { handleLogout } from './auth-utils.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
+    // 로그아웃 버튼에 이벤트 리스너 추가
+    const logoutBtn = document.getElementById('dashLogoutBtn');
+    logoutBtn.addEventListener('click', handleLogout);
+
     // 현재 로그인한 사용자 확인
     auth.onAuthStateChanged(async (user) => {
         if (!user) {
