@@ -70,11 +70,20 @@
                 memo: urlParams.get('memo')
             };
 
+            // Firestore Timestamp 초 단위를 밀리초로 변환
+            const timestamp = caseInfo.createdAt.seconds ? 
+                new Date(caseInfo.createdAt.seconds * 1000) : 
+                new Date(caseInfo.createdAt);
+
             caseDetails.innerHTML = `
                 <div class="info-item"><span class="info-label">케이스 ID:</span> ${caseInfo.caseId}</div>
                 <div class="info-item"><span class="info-label">치과명:</span> ${caseInfo.clinicName}</div>
                 <div class="info-item"><span class="info-label">환자명:</span> ${caseInfo.patientName}</div>
-                <div class="info-item"><span class="info-label">생성일:</span> ${new Date(caseInfo.createdAt).toLocaleDateString()}</div>
+                <div class="info-item"><span class="info-label">생성일:</span> ${timestamp.toLocaleDateString('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }).replace(/\. /g, '-').replace('.', '')}</div>
                 <div class="info-item"><span class="info-label">메모:</span> ${caseInfo.memo || '없음'}</div>
             `;
         }

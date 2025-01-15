@@ -1,5 +1,5 @@
 import { auth, db } from './firebase-config.js';
-import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { collection, query, where, getDocs, addDoc, serverTimestamp, deleteDoc, doc, orderBy } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', async function() {
     // 현재 로그인한 사용자 확인
@@ -9,7 +9,16 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
         }
 
-        // 케이스 목록을 표시할 컨테이너
+        // 폼 초기화 함수를 먼저 정의
+        function resetCaseForm() {
+            document.getElementById('caseId').value = '';
+            document.getElementById('clinicName').value = '';
+            document.getElementById('patientName').value = '';
+            document.getElementById('shadeGuideModel').value = '';
+            document.getElementById('memo').value = '';
+            document.getElementById('createdAt').value = '';
+        }
+
         const caseContainer = document.querySelector('.case-table-content');
         
         // 테이블 컨테이너에 이벤트 위임 설정
@@ -43,7 +52,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             try {
                 const q = query(
                     collection(db, 'cases'),
-                    where('userId', '==', user.uid)
+                    where('userId', '==', user.uid),
+                    orderBy('createdAt', 'desc')
                 );
                 
                 const querySnapshot = await getDocs(q);
@@ -91,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             caseId: caseData.caseId,
                             clinicName: caseData.clinicName,
                             patientName: caseData.patientName,
-                            createdAt: caseData.createdAt,
+                            createdAt: caseData.createdAt.toDate().toISOString(),
                             memo: caseData.memo
                         })}'>실행하기</div>
                         </div>
@@ -112,7 +122,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // 케이스 생성 폼 제출 처리
         const submitBtn = document.getElementById('caseSubmitBtn');
-
         submitBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             
@@ -145,15 +154,33 @@ document.addEventListener('DOMContentLoaded', async function() {
                 // 모달 닫기
                 document.querySelector('.modalwrapper').style.display = 'none';
                 
+                // 폼 초기화
+                resetCaseForm();
+                
                 // 케이스 목록 새로고침
                 await loadCases();
-
 
                 alert('케이스가 성공적으로 등록되었습니다.');
 
             } catch (error) {
                 console.error("케이스 생성 실패:", error);
                 alert('케이스 생성에 실패했습니다.');
+            }
+        });
+
+        // 모달 닫기 버튼 클릭 시 폼 초기화
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        modalCloseBtn.addEventListener('click', function() {
+            resetCaseForm();
+            document.querySelector('.modalwrapper').style.display = 'none';
+        });
+
+        // 모달 외부 클릭 시 폼 초기화
+        const modalWrapper = document.querySelector('.modalwrapper');
+        modalWrapper.addEventListener('click', function(e) {
+            if (e.target === modalWrapper) {
+                resetCaseForm();
+                modalWrapper.style.display = 'none';
             }
         });
     });
