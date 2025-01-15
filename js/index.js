@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     name: name,
                     organization: organization,
                     phone: phone,
+                    isAdmin: false, // admin.com 도메인을 가진 이메일은 admin으로 설정
                     createdAt: new Date().toISOString()
                 });
                 

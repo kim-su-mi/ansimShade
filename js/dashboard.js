@@ -54,11 +54,28 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         async function loadCases() {
             try {
-                const q = query(
-                    collection(db, 'cases'),
-                    where('userId', '==', user.uid),
-                    orderBy('createdAt', 'desc')
+                // admin 여부 확인
+                const userDoc = await getDocs(
+                    query(
+                        collection(db, 'ansim_collection'),
+                        where('uid', '==', user.uid)
+                    )
                 );
+                
+                const userData = userDoc.docs[0].data();
+                const isAdmin = userData.isAdmin;
+
+                // admin이면 모든 케이스를, 아니면 자신의 케이스만 조회
+                const q = isAdmin 
+                    ? query(
+                        collection(db, 'cases'),
+                        orderBy('createdAt', 'desc')
+                      )
+                    : query(
+                        collection(db, 'cases'),
+                        where('userId', '==', user.uid),
+                        orderBy('createdAt', 'desc')
+                      );
                 
                 const querySnapshot = await getDocs(q);
                 caseContainer.innerHTML = ''; // 기존 내용 비우기
@@ -74,38 +91,39 @@ document.addEventListener('DOMContentLoaded', async function() {
                     return;
                 }
                 
+                // admin일 경우 추가 정보 표시
                 querySnapshot.forEach((doc) => {
                     const caseData = doc.data();
                     const caseHtml = `
                         <div class="case-table-row case" data-case-id="${doc.id}">
-                        <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36cb-ca543eaa" class="div-block-4">
-                        <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36cc-ca543eaa" class="paragraph-small color-neutral-100 mg-bottom-2px">${caseData.caseId}</div>
-                        </div>
-                        <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36cf-ca543eaa">
-                        <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d0-ca543eaa" class="paragraph-small color-neutral-100 mg-bottom-2px">${caseData.clinicName}</div>
-                        </div>
-                        <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d2-ca543eaa">
-                        <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d3-ca543eaa" class="paragraph-small color-neutral-100 mg-bottom-2px">${caseData.patientName}</div>
-                        </div>
-                        <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d5-ca543eaa">
-                        <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d6-ca543eaa" class="paragraph-small color-neutral-100 mg-bottom-2px">${new Date(caseData.createdAt.toDate()).toLocaleDateString()}</div>
-                        </div>
-                        <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d8-ca543eaa" class="div-block-2">
-                        <div class="div-block">
-                            <div class="status-badge green">
-                            <div class="flex align-center gap-column-4px">
-                                <div class="paragraph-small">케이스 생성</div>
+                            <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36cb-ca543eaa" class="div-block-4">
+                                <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36cc-ca543eaa" class="paragraph-small color-neutral-100 mg-bottom-2px">${caseData.caseId}</div>
                             </div>
+                            <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36cf-ca543eaa">
+                                <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d0-ca543eaa" class="paragraph-small color-neutral-100 mg-bottom-2px">${caseData.clinicName}</div>
+                            </div>
+                            <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d2-ca543eaa">
+                                <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d3-ca543eaa" class="paragraph-small color-neutral-100 mg-bottom-2px">${caseData.patientName}</div>
+                            </div>
+                            <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d5-ca543eaa">
+                                <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d6-ca543eaa" class="paragraph-small color-neutral-100 mg-bottom-2px">${new Date(caseData.createdAt.toDate()).toLocaleDateString()}</div>
+                            </div>
+                            <div id="w-node-fdef1c8d-b269-40f9-d191-504331ba36d8-ca543eaa" class="div-block-2">
+                                <div class="div-block">
+                                    <div class="status-badge green">
+                                        <div class="flex align-center gap-column-4px">
+                                            <div class="paragraph-small">케이스 생성</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="w-node-f306c9ec-5450-be5f-96ec-3019782cc848-ca543eaa" class="div-block-5">
+                                <div id="w-node-f306c9ec-5450-be5f-96ec-3019782cc849-ca543eaa" class="paragraph-small play" data-case-id="${doc.id}">실행하기</div>
+                            </div>
+                            <div id="w-node-_229ffc2d-55df-4a28-1cae-a8783c2bf690-ca543eaa" class="div-block-5 delete">
+                                <div id="w-node-_229ffc2d-55df-4a28-1cae-a8783c2bf691-ca543eaa" class="paragraph-small play delete">삭제</div>
                             </div>
                         </div>
-                        </div>
-                        <div id="w-node-f306c9ec-5450-be5f-96ec-3019782cc848-ca543eaa" class="div-block-5">
-                        <div id="w-node-f306c9ec-5450-be5f-96ec-3019782cc849-ca543eaa" class="paragraph-small play" data-case-id="${doc.id}">실행하기</div>
-                        </div>
-                        <div id="w-node-_229ffc2d-55df-4a28-1cae-a8783c2bf690-ca543eaa" class="div-block-5 delete">
-                        <div id="w-node-_229ffc2d-55df-4a28-1cae-a8783c2bf691-ca543eaa" class="paragraph-small play delete">삭제</div>
-                        </div>
-                    </div>
                     `;
                     caseContainer.insertAdjacentHTML('beforeend', caseHtml);
                 });
