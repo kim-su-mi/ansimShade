@@ -54,39 +54,57 @@
     <script type="module">
         import { auth, db } from './js/firebase-config.js';
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+        import { 
+            collection, 
+            doc, 
+            getDoc, 
+            query,
+            where,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
         import { handleLogout } from './js/auth-utils.js';
 
-        // URL 파라미터에서 케이스 정보 가져오기
+        // URL에서 case ID만 가져오기
         const urlParams = new URLSearchParams(window.location.search);
+        const caseId = urlParams.get('id');
         const caseDetails = document.getElementById('caseDetails');
-        
-        // 케이스 정보 표시
-        if (urlParams.has('caseId')) {
-            const caseInfo = {
-                caseId: urlParams.get('caseId'),
-                clinicName: urlParams.get('clinicName'),
-                patientName: urlParams.get('patientName'),
-                createdAt: urlParams.get('createdAt'),
-                memo: urlParams.get('memo')
-            };
 
-            // Firestore Timestamp 초 단위를 밀리초로 변환
-            const timestamp = caseInfo.createdAt.seconds ? 
-                new Date(caseInfo.createdAt.seconds * 1000) : 
-                new Date(caseInfo.createdAt);
+        // 케이스 정보 가져오기
+        async function loadCaseDetails() {
+            if (!caseId) return;
 
-            caseDetails.innerHTML = `
-                <div class="info-item"><span class="info-label">케이스 ID:</span> ${caseInfo.caseId}</div>
-                <div class="info-item"><span class="info-label">치과명:</span> ${caseInfo.clinicName}</div>
-                <div class="info-item"><span class="info-label">환자명:</span> ${caseInfo.patientName}</div>
-                <div class="info-item"><span class="info-label">생성일:</span> ${timestamp.toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                }).replace(/\. /g, '-').replace('.', '')}</div>
-                <div class="info-item"><span class="info-label">메모:</span> ${caseInfo.memo || '없음'}</div>
-            `;
+            try {
+                const caseDoc = await getDoc(doc(db, 'cases', caseId));
+                
+                if (caseDoc.exists()) {
+                    const caseData = caseDoc.data();
+                    
+                    // 현재 로그인한 사용자와 케이스 소유자가 일치하는지 확인
+                    if (caseData.userId !== auth.currentUser?.uid) {
+                        window.location.href = 'dashboard.html';
+                        return;
+                    }
+
+                    const timestamp = caseData.createdAt.toDate();
+
+                    caseDetails.innerHTML = `
+                        <div class="info-item"><span class="info-label">케이스 ID:</span> ${caseData.caseId}</div>
+                        <div class="info-item"><span class="info-label">치과명:</span> ${caseData.clinicName}</div>
+                        <div class="info-item"><span class="info-label">환자명:</span> ${caseData.patientName}</div>
+                        <div class="info-item"><span class="info-label">생성일:</span> ${timestamp.toLocaleDateString('ko-KR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                        }).replace(/\. /g, '-').replace('.', '')}</div>
+                        <div class="info-item"><span class="info-label">메모:</span> ${caseData.memo || '없음'}</div>
+                    `;
+                } else {
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (error) {
+                console.error('케이스 정보 로딩 실패:', error);
+                alert('케이스 정보를 불러오는데 실패했습니다.');
+            }
         }
 
         // 사용자의 게시글 가져오기
@@ -124,13 +142,13 @@
             }
         }
 
-        // 로그인 상태 확인
+        // 로그인 상태 확인 및 케이스 정보 로드
         onAuthStateChanged(auth, (user) => {
             if (!user) {
                 window.location.href = 'index.html';
             } else {
-                console.log('현재 로그인된 사용자:', user.email);
-                getUserPosts(user.uid); // 사용자의 게시글 로드
+                loadCaseDetails();
+                getUserPosts(user.uid);
             }
         });
 

@@ -47,9 +47,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             // 실행하기 버튼 클릭 처리
             if (e.target.classList.contains('play') && !e.target.classList.contains('delete')) {
-                const caseInfo = JSON.parse(e.target.dataset.caseInfo);
-                const params = new URLSearchParams(caseInfo).toString();
-                window.location.href = `main.html?${params}`;
+                const caseId = e.target.dataset.caseId;
+                window.location.href = `main.html?id=${caseId}`;
             }
         });
 
@@ -101,14 +100,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         </div>
                         </div>
                         <div id="w-node-f306c9ec-5450-be5f-96ec-3019782cc848-ca543eaa" class="div-block-5">
-                        <div id="w-node-f306c9ec-5450-be5f-96ec-3019782cc849-ca543eaa" class="paragraph-small play" data-case-info='${JSON.stringify({
-                            uid: user.uid,
-                            caseId: caseData.caseId,
-                            clinicName: caseData.clinicName,
-                            patientName: caseData.patientName,
-                            createdAt: caseData.createdAt.toDate().toISOString(),
-                            memo: caseData.memo
-                        })}'>실행하기</div>
+                        <div id="w-node-f306c9ec-5450-be5f-96ec-3019782cc849-ca543eaa" class="paragraph-small play" data-case-id="${doc.id}">실행하기</div>
                         </div>
                         <div id="w-node-_229ffc2d-55df-4a28-1cae-a8783c2bf690-ca543eaa" class="div-block-5 delete">
                         <div id="w-node-_229ffc2d-55df-4a28-1cae-a8783c2bf691-ca543eaa" class="paragraph-small play delete">삭제</div>
